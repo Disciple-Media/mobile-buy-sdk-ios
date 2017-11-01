@@ -73,6 +73,16 @@ final class ClientQuery {
         }
     }
     
+    static func queryForProductWithTitle(_ title: String, limit: Int) -> Storefront.QueryRootQuery {
+        return Storefront.buildQuery { $0
+            .shop { $0
+                .products(first: Int32(limit), query: title) {$0
+                    .fragmentForStandardProduct()
+                }
+            }
+        }
+    }
+    
     // ----------------------------------
     //  MARK: - Discounts -
     //

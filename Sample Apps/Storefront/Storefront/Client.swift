@@ -46,6 +46,33 @@ final class Client {
     }
     
     // ----------------------------------
+    //  MARK: - Wrapper for generic Graph.Client methods -
+    //
+    @discardableResult
+    func queryGraphWith(_ query: Storefront.QueryRootQuery, completion: @escaping (Storefront.QueryRoot?, Graph.QueryError?) -> Void) -> Task {
+        let task = client.queryGraphWith(query) { (query, error) in
+            completion(query, error)
+        }
+        
+        return task
+    }
+    
+    @discardableResult
+    func mutateGraphWith(_ mutation: Storefront.MutationQuery, completion: @escaping (Storefront.Mutation?, Graph.QueryError?) -> Void) -> Task {
+        let task = client.mutateGraphWith(mutation) { (mutation, error) in
+            completion(mutation, error)
+        }
+        
+        return task
+    }
+    
+    @discardableResult
+    func queryGraphWith(_ query: Storefront.QueryRootQuery, retryHandler: Graph.RetryHandler<Storefront.QueryRoot>, completionHandler: @escaping Graph.QueryCompletion) -> Task {
+        return client.queryGraphWith(query, cachePolicy: nil, retryHandler: retryHandler, completionHandler: completionHandler)
+        
+    }
+    
+    // ----------------------------------
     //  MARK: - Collections -
     //
     @discardableResult
@@ -74,6 +101,29 @@ final class Client {
     // ----------------------------------
     //  MARK: - Products -
     //
+    @discardableResult
+    func fetchProductWithTitle(_ title:String, completion: @escaping (ProductViewModel?) -> Void) -> Task {
+        let query = ClientQuery.queryForProductWithTitle(title, limit: 25)
+        let task = client.queryGraphWith(query) { (query, error) in
+            error.debugPrint()
+            
+            if let query = query {
+                let shop = query.shop
+                let products = PageableArray(with: shop.products.edges, pageInfo: shop.products.pageInfo)
+                if let product = products.items.first {
+                    completion(product)
+                } else {
+                    completion(nil)
+                }
+            } else {
+                print("Failed to load product \(title): \(String(describing: error))")
+                completion(nil)
+            }
+        }
+        task.resume()
+        return task
+    }
+    
     @discardableResult
     func fetchProducts(in collection: CollectionViewModel, limit: Int = 25, after cursor: String? = nil, completion: @escaping (PageableArray<ProductViewModel>?) -> Void) -> Task {
         
