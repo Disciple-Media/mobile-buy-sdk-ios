@@ -9,28 +9,28 @@ Pod::Spec.new do |s|
   s.module_name         = 'MobileBuySDK'
   s.requires_arc        = true
   s.platforms           = {
-    :ios     => '10.0',
+    :ios     => '9.0',
     :watchos => '3.1',
     :tvos    => '9.0'
   }
-  
-  s.license = { 
-    :type => 'MIT', 
-    :file => 'LICENSE' 
+
+  s.license = {
+    :type => 'MIT',
+    :file => 'LICENSE'
   }
-  
-  s.source = { 
-    :git        => 'https://github.com/Shopify/mobile-buy-sdk-ios.git', 
-    :tag        => s.version, 
-    :submodules => true 
+
+  s.source = {
+    :git        => 'https://github.com/Shopify/mobile-buy-sdk-ios.git',
+    :tag        => s.version,
+    :submodules => true
   }
-  
+
   s.source_files         = 'Buy/**/*.{h,m,c,swift}', 'Dependencies/Swift Gen/support/Sources/GraphQL.swift'
   s.ios.source_files     = 'Pay/**/*.{swift}'
   s.watchos.source_files = 'Pay/**/*.{swift}'
-  
-  s.xcconfig = { 
+
+  s.xcconfig = {
     "GCC_PREPROCESSOR_DEFINITIONS" => '$(inherited) COCOAPODS=1'
   }
-  
+
 end
