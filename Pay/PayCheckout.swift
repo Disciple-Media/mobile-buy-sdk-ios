@@ -45,11 +45,13 @@ public struct PayCheckout {
     public let subtotalPrice:   Decimal
     public let totalTax:        Decimal
     public let paymentDue:      Decimal
+    
+    public let companyName:     String
 
     // ----------------------------------
     //  MARK: - Init -
     //
-    public init(id: String, lineItems: [PayLineItem], discount: PayDiscount?, shippingAddress: PayAddress?, shippingRate: PayShippingRate?, subtotalPrice: Decimal, needsShipping: Bool, totalTax: Decimal, paymentDue: Decimal) {
+    public init(id: String, lineItems: [PayLineItem], discount: PayDiscount?, shippingAddress: PayAddress?, shippingRate: PayShippingRate?, subtotalPrice: Decimal, needsShipping: Bool, totalTax: Decimal, paymentDue: Decimal, companyName: String) {
 
         self.id              = id
         self.lineItems       = lineItems
@@ -63,6 +65,7 @@ public struct PayCheckout {
 
         self.hasLineItems    = !lineItems.isEmpty
         self.needsShipping   = needsShipping
+        self.companyName     = companyName
     }
 }
 
@@ -103,7 +106,7 @@ internal extension PayCheckout {
         //            }
         //        }
 
-        summaryItems.append(self.paymentDue.summaryItemNamed("TOTAL"))
+        summaryItems.append(self.paymentDue.summaryItemNamed(self.companyName.uppercased()))
 
         return summaryItems
     }
